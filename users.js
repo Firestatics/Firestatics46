@@ -812,7 +812,14 @@ User = (function () {
 			this.send('|nametaken|' + name + "|Your authentication token was invalid.");
 		}
 
+		var rooms = Db('rooms')[userid];
 		if (Tells.inbox[userid]) Tells.sendTell(userid, this);
+		if (rooms && rooms.length) {
+			rooms.forEach(function (room) {
+				this.tryJoinRoom(room, connection);
+			}.bind(this));
+		}
+
 		return false;
 	};
 	User.prototype.validateRename = function (name, tokenData, newlyRegistered, challenge) {
@@ -1204,10 +1211,12 @@ User = (function () {
 		var name = 'Guest ' + this.guestNum;
 		var userid = toId(name);
 		if (this.registered && this.userid !== userid) {
-			Seen[this.userid] = Date.now();
-			steno.writeFile('config/seen.json', JSON.stringify(Seen, null, 2), function (err) {
-				if (err) throw err;
+			var rooms = Object.keys(this.roomCount).filter(function (room) {
+				return ['global', 'lobby', 'staff'].indexOf(room) < 0;
 			});
+			if (rooms.length) Db('rooms')[this.userid] = rooms;
+			Db('seen')[this.userid] = Date.now();
+			Db.save();
 		}
 		for (var i = 0; i < this.connections.length; i++) {
 			if (this.connections[i] === connection) {
