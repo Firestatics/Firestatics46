@@ -33,7 +33,7 @@ var emotes = {
 	'xaa': 'http://i.imgur.com/V728AvL.png',
 	'yayface': 'http://i.imgur.com/anY1jf8.png',
 	'yesface': 'http://i.imgur.com/k9YCF6K.png'
-};
+};      'Doge':'http://orig04.deviantart.net/7c5b/f/2014/279/4/5/doge__by_honeybunny135-d81wk54.png'
 
 var emotesKeys = Object.keys(emotes);
 var patterns = [];
